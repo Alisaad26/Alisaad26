@@ -1,0 +1,36 @@
+import pandas as pd
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+import kaggle
+
+# Set your Kaggle API key and dataset details
+kaggle.api.authenticate()  # Make sure you have your Kaggle API key set up
+
+# Download dataset (assuming it's in CSV format and located at 'dataset.csv')
+dataset_url = 'kaggle/dataset_name.csv'  # Change this to the dataset path
+dataset_path = 'dataset.csv'
+
+kaggle.api.dataset_download_file(dataset_url, path='.', file_name=dataset_path, force=True)
+
+# Load the dataset
+data = pd.read_csv(dataset_path)
+
+# Display basic information about the dataset
+print("Initial Data Info:")
+print(data.info())
+
+# 1. Handling Missing Values with SimpleImputer
+imputer = SimpleImputer(strategy='mean')  # You can use 'median', 'most_frequent', etc.
+data_imputed = pd.DataFrame(imputer.fit_transform(data), columns=data.columns)
+
+# 2. Standardization (Z-score normalization)
+scaler_standard = StandardScaler()
+data_standardized = pd.DataFrame(scaler_standard.fit_transform(data_imputed), columns=data_imputed.columns)
+
+# 3. Normalization (Min-Max Scaling)
+scaler_normal = MinMaxScaler()
+data_normalized = pd.DataFrame(scaler_normal.fit_transform(data_standardized), columns=data_standardized.columns)
+
+# Display the preprocessed data
+print("Preprocessed Data:")
+print(data_normalized.head())
